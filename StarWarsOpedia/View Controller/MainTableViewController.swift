@@ -72,18 +72,19 @@ extension MainTableViewController: UISearchBarDelegate {
 
 extension MainTableViewController {
   func fetchFilms() {
-    let request = AF.request("https://swapi.dev/api/films")
     
     /*
-    request.responseJSON { (data) in
-      print(data)
-    } */
-    
+    let request = AF.request("https://swapi.dev/api/films")
     request.responseDecodable(of: Films.self) { (response) in
       guard let films = response.value else {return}
       print(films.results[0].title)
-      
-    }
+    } */
     
+    AF.request("https://swapi.dev/api/films")
+      .validate()
+      .responseDecodable(of: Films.self) { (response) in
+        guard let films = response.value else {return}
+        print(films.results[0].title)
+      }
   }
 }

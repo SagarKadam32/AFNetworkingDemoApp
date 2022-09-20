@@ -93,8 +93,12 @@ extension MainTableViewController {
       .responseDecodable(of: Films.self) { (response) in
         guard let films = response.value else {return}
         print(films.results[0].title)
+        print("Response : \(response)")
         self.items = films.results
         self.tableView.reloadData()
       }
+    
+    
+
   }
 }

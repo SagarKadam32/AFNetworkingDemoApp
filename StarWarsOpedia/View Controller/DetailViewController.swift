@@ -114,6 +114,8 @@ extension DetailViewController {
     switch data {
     case 	is Film :
       fetch(data.listItems, of: StarShip.self)
+    case is StarShip :
+      fetch(data.listItems, of: Film.self)
     default:
       print("Unknown type: ", String(describing: type(of: data)))
     }

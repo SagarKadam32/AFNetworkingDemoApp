@@ -34,6 +34,8 @@ class MainTableViewController: UITableViewController {
   
   var items: [Displayable] = []
   var selectedItem: Displayable?
+  var films: [Film] = []
+
   
   
   override func viewDidLoad() {
@@ -72,33 +74,42 @@ class MainTableViewController: UITableViewController {
 // MARK: - UISearchBarDelegate
 extension MainTableViewController: UISearchBarDelegate {
   func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+    guard let shipName = searchBar.text else {return}
+    searchStarships(for: shipName)
   }
   
   func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+    searchBar.text = nil
+    searchBar.resignFirstResponder()
+    items = films
+    tableView.reloadData()
   }
 }
 
 extension MainTableViewController {
   func fetchFilms() {
-    
-    /*
-    let request = AF.request("https://swapi.dev/api/films")
-    request.responseDecodable(of: Films.self) { (response) in
-      guard let films = response.value else {return}
-      print(films.results[0].title)
-    } */
-    
     AF.request("https://swapi.dev/api/films")
       .validate()
       .responseDecodable(of: Films.self) { (response) in
         guard let films = response.value else {return}
+        self.films = films.results
         print(films.results[0].title)
         print("Response : \(response)")
         self.items = films.results
         self.tableView.reloadData()
       }
+  }
+  
+  func searchStarships(for name: String) {
+    let url = "https://swapi.dev/api/starships"
+    let parameters:[String: String] = ["search":name]
     
-    
-
+    AF.request(url, parameters: parameters)
+      .validate()
+      .responseDecodable(of: Starships.self) { response in
+        guard let starships = response.value else {return}
+        self.items = starships.results
+        self.tableView.reloadData()
+      }
   }
 }
